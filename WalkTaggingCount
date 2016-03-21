@@ -1,0 +1,67 @@
+var notPaidCount = 0
+var paidCount = 0;
+var registeredCount = 0;
+var notRegisteredCount = 0;
+var rowsCount = 0
+var skipMasterRow = true;
+			String.prototype.endsWith = function(pattern) {
+				var d = this.length - pattern.length;
+				return d >= 0 && this.lastIndexOf(pattern) === d;
+			};
+			
+			//Sample:ItemValue1100141
+            $.each($("input[name^='ItemValue210']"), function(){ 
+				
+				var myId = $(this).attr('id');
+				var registeredId = myId.replace('ItemValue210','ItemValue110');
+				registeredId = registeredId.substring(0, 15) + '2';
+				
+				if($(this).val()=='YES')
+				{
+					if(skipMasterRow)
+					{
+						skipMasterRow = false;
+						return;
+					}
+					rowsCount++;
+				}
+				
+				if($(this).val()=='YES' && $(this).is(':checked'))
+				{
+						paidCount ++;
+				}
+				else if ($(this).val()=='NO' && $(this).is(':checked'))
+				{
+						if($('#' + registeredId).is(':checked')) //Not paid, but check if registered.
+						{
+							notPaidCount ++;
+						}
+				}
+				
+				
+				//console.log("Paid Id:" + $(this).attr('id') + " Val:" + $(this).val() + " checked:" + $(this).is(':checked') + " registered id:" + registeredId);
+            });
+			skipMasterRow = true;
+			$.each($("input[name^='ItemValue110']"), function(){            
+				if(skipMasterRow)
+				{
+					skipMasterRow = false;
+					return;
+				}
+				if($(this).val()=='YES' && $(this).is(':checked'))
+				{
+					registeredCount ++;
+				}
+				else if($(this).val()=='NO' && $(this).is(':checked'))
+				{
+					notRegisteredCount ++;
+				}
+				//console.log("Registered Id:" + $(this).attr('id') + " Val:" + $(this).val() + " checked:" + $(this).is(':checked'));
+			});
+			
+			console.log('Registered count:' + registeredCount);
+			console.log('Not Registered count:' + notRegisteredCount);
+			console.log('Paid count:' + paidCount);
+			console.log('Not Paid and registered count:' + notPaidCount);
+			console.log('Rows Count:' + rowsCount);
+			
